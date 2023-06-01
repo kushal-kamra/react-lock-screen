@@ -1,33 +1,52 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+const numbers = [1,2,3,4,5,6,7,8,9,0];
+const password = [1,2,3,7];
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [error, setError] = useState("");
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [pressedNumbers, setPressedNumbers] = useState([]);
+
+  useEffect(() => {
+    if (pressedNumbers.length == 1) {
+      setError("");
+    } else if (pressedNumbers.length == password.length) {
+      if (pressedNumbers.join('') == password.join('')) {
+        console.log('correct password');
+        setIsCorrect(true);
+        setError("");
+      } else {
+        console.log('bad password');
+        setError('bad password')
+        setPressedNumbers([]);
+      }
+    }
+  }, [pressedNumbers]);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {isCorrect ? (
+        <div>Success!</div>
+        ) : (
+          <div>
+            {error}
+            <div className='number-pad'>
+              {numbers.map((number, index) => (
+                <button
+                  className={number === 0 ? 'zero': ''}
+                  key={index}
+                  onClick={() => setPressedNumbers((cur) => [...cur, number])}
+                >
+                  {number}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
     </>
   )
 }
